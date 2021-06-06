@@ -69,29 +69,37 @@ cv2.rectangle(outpush_element_image, (100, 50), (120, 350), [0,0,0], thickness= 
 cv2.rectangle(outpush_element_image, (200, 200), (300, 300), [0,0,0], thickness= -1)
 cv2.rectangle(outpush_element_image, (180, 150), (550, 160), [0,0,0], thickness= -1)
 
-
+img2 = cv2.imread("./output/lvl2_denoised.png", cv2.IMREAD_COLOR)
+print(img.shape)
+img = np.zeros((img2.shape[0]*2,img2.shape[1]*2,3), np.uint8)
+for i in range(l):
+    for j in range(w):
+        color = img2[(i,j)]
+        for n in range(2):
+            for m in range(2):
+                img[i*2 + n][j*2 + m] = color
 def setStartEnd(event, x, y, flag, params):
     # checking for left mouse clicks
-    global clicks, start, end, outpush_element_image
+    global clicks, start, end, img
     if event == cv2.EVENT_LBUTTONDBLCLK:
         clicks += 1
         print("Click on the maze to capture point location")
         if clicks == 1: 
             start = Point(x, y)
             print("captured start =", x, y)
-            cv2.circle(outpush_element_image,(x, y),2,(0, 255,0),-1)
-            cv2.imshow("output", outpush_element_image)
+            cv2.circle(img,(x, y),2,(0, 255,0),-1)
+            cv2.imshow("output", img)
             print("Again click to capture end location")
             
         elif clicks == 2:
             end = Point(x, y)
             print("captured end =", x, y)
-            cv2.circle(outpush_element_image,(x, y),2,(0, 0, 255),-1)
-            cv2.imshow("output", outpush_element_image)
+            cv2.circle(img,(x, y),2,(0, 0, 255),-1)
+            cv2.imshow("output", img)
             cv2.destroyAllWindows()
 
 cv2.namedWindow("output",1)
-cv2.imshow("output", outpush_element_image)
+cv2.imshow("output", img)
 cv2.setMouseCallback("output", setStartEnd, 0)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
@@ -113,14 +121,13 @@ def obstacle_free(img, matrix, Point1, Point2):
 
     start = Point1
     end = Point2
-    for i in range(101):
-        u = i/100
+    for i in range(301):
+        u = i/300
         temp_x = int(start.horizontal*u + end.horizontal*(1-u))
         temp_y = int(start.vertical*u + end.vertical*(1-u))
-        img[(int(temp_y), int(temp_x))] = [0,0,255]
+        img[(int(temp_y), int(temp_x))] = [193,182,255]
         if matrix[int(temp_y), int(temp_x)].obstacle == True:
             img[(int(temp_y), int(temp_x))] = [100,100,255] 
-            print("ayo obstacle!") 
             return False
     return True
 
@@ -178,7 +185,7 @@ def rrt(img, start, end):
         matrix[int(nextNode.vertical)][int(nextNode.horizontal)].prev_x = int(currentPoint.horizontal)
         matrix[int(nextNode.vertical)][int(nextNode.horizontal)].prev_y = int(currentPoint.vertical)
         pointList.append(nextNode)
-        cv2.line(img, (int(currentPoint.horizontal), int(currentPoint.vertical)), (int(nextNode.horizontal), int(nextNode.vertical)), (255, 100 , 0), thickness= 2)
+        cv2.line(img, (int(currentPoint.horizontal), int(currentPoint.vertical)), (int(nextNode.horizontal), int(nextNode.vertical)), (200, 200 , 0), thickness= 2)
         cv2.circle(img, (int(nextNode.horizontal), int(nextNode.vertical)), 1, (0,100,200), thickness=-1)
 
         currentPoint.visited = True
@@ -187,12 +194,12 @@ def rrt(img, start, end):
             found = True
             matrix[end.vertical][end.horizontal].prev_x = int(nextNode.horizontal)
             matrix[end.vertical][end.horizontal].prev_y = int(nextNode.vertical)
-            cv2.line(img, (int(end.horizontal), int(end.vertical)), (int(nextNode.horizontal), int(nextNode.vertical)), (255, 0 , 0), thickness= 1)
+            cv2.line(img, (int(end.horizontal), int(end.vertical)), (int(nextNode.horizontal), int(nextNode.vertical)), (155, 155 , 0), thickness= 1)
             print("Path finding complete")
             cv2.destroyAllWindows()
             break
-        cv2.imshow("Processing sheee", img)
-        cv2.waitKey(1)
+        #cv2.imshow("Processing sheee", img)
+        #cv2.waitKey(1)
     
     img[(start.vertical, start.horizontal)] = [0,0 ,255]
     pathFound = []
@@ -214,11 +221,11 @@ def showPath(img, path):
         cv2.circle(img, i, 3, (0,0,255), thickness=-1)
 
 
-cv2.rectangle(outpush_element_image, (end.horizontal - 20, end.vertical - 20), (end.horizontal + 20, end.vertical + 20), (50,205,154), thickness=-1)
-cv2.circle(outpush_element_image, (end.horizontal, end.vertical), 3, (0,0,255), thickness=-1)
-path = rrt(outpush_element_image, start, end)
-showPath(outpush_element_image, path)                
-cv2.imwrite("Solvedmaze_rrt.png", outpush_element_image)
-cv2.imshow('Result', outpush_element_image)
+cv2.rectangle(img, (end.horizontal - 20, end.vertical - 20), (end.horizontal + 20, end.vertical + 20), (50,205,154), thickness=-1)
+cv2.circle(img, (end.horizontal, end.vertical), 3, (0,0,255), thickness=-1)
+path = rrt(img, start, end)
+showPath(img, path)                
+cv2.imwrite("./output/rrt_circle.png", img)
+cv2.imshow('Result', img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
