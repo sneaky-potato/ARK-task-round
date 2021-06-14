@@ -1,3 +1,18 @@
+# Task 5: 3D Tic-Tac-Toe Agent
+
+## Format
+
+The ` T5.py` file is the solution file to this task (only part 1 done). Other files present were from the forked repo: [Cypre55/gym-tictactoe3d](https://github.com/Cypre55/gym-tictactoe3d), original repo being here: [shkreza/gym-tictactoe3d](https://github.com/shkreza/gym-tictactoe3d). `2dtictactoehuman.py` is an adaptaion of the orginal environment file `tictactoe_env.py` (inside **gym_tictactoe\envs** directory) which was used for creating the 2D version of tic-tact-toe.
+
+## Running the script
+
+```bash
+python T5.py
+```
+And the rest should be pretty self explanatory as the whole game is to be played on terminal.  
+Refer to the documentation `task5.pdf` file for more information.  
+And now the original Readme from the forked repo will continue.  
+
 # 3D Tic Tac Toe Game in OpenAI Gym
 The 3D version of Tic Tac Toe is implemented as an OpenAI's Gym environment.
 
